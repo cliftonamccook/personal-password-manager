@@ -21,13 +21,6 @@ class DBControl:
         password TEXT NOT NULL);
         """)
 
-#        self.cursor.execute("""
-#        CREATE TABLE IF NOT EXISTS masterpassword(
-#        id INTEGER PRIMARY KEY,
-#        password TEXT NOT NULL,
-#        recovery_key TEXT NOT NULL);
-#        """)
-
         self.cursor.execute("""
         CREATE TABLE IF NOT EXISTS vault(
         id INTEGER PRIMARY KEY,
@@ -49,12 +42,7 @@ class DBControl:
         self.cursor.execute('SELECT * FROM masterpassword WHERE id = 1 AND password = ?', [(password_hash)])
         return self.cursor.fetchall()
 
-#    def insert_keys(self, password_hash, recovery_key):
-    def insert_keys(self, password_hash):
-#        insert_password = """INSERT INTO masterpassword(password, recovery_key)
-#                    VALUES(?, ?) """
-#        self.cursor.execute(insert_password, ((password_hash), (recovery_key)))
-        
+    def insert_keys(self, password_hash):        
         insert_password = """INSERT INTO masterpassword(password) VALUES(?) """
         self.cursor.execute(insert_password, ((password_hash),))
         
@@ -68,19 +56,12 @@ class DBControl:
         insert_fields = """INSERT INTO vault(name, url, username, password, note) 
                 VALUES(?, ?, ?, ?, ?) """
         name = obj["name"]
-        # print(obj["name"])
         url = obj["url"]
-        # print(obj["url"])
         username = obj["username"]
-        # print(obj["username"])
         password = obj["password"]
-        # print(obj["password"])
         notes = obj["notes"]
-        # print(obj["notes"])
         self.cursor.execute(insert_fields, (name, url, username, password, notes))
         self.db.commit()
-
-    # def fetch_ids(self, ids):
 
     def fetch_entries(self):
         objs = []

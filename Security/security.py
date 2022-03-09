@@ -3,7 +3,6 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.backends import default_backend
 from cryptography.fernet import Fernet
 import hashlib
-#import os
 
 
 class SecurityManager:
@@ -13,7 +12,6 @@ class SecurityManager:
 
     def __init__(self):
         self.salt = b'7139'
-#        self.salt = os.urandom(16)
         self.backend = default_backend()
         self.encryption_key = None
 
