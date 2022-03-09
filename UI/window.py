@@ -1,7 +1,4 @@
 from tkinter import *
-from functools import partial
-from tkinter import messagebox
-import pyperclip
 from Controller.controller import Controller
 
 
@@ -21,9 +18,6 @@ class PPMWindow:
     reset_window = None
     password_vault_window = None
     entry_window = None
-
-    def __init__(self):
-        self.__val = 0
 
     @staticmethod
     def _clearwidgets():
@@ -225,4 +219,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
