@@ -1,4 +1,3 @@
-import uuid
 import base64
 from DBController.dbconnect import DBControl
 from Security.security import SecurityManager
