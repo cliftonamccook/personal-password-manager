@@ -14,10 +14,7 @@ class PPMWindow:
     # References to sub-windows:
     initial_window = None
     login_window = None
-    recovery_window = None
-    reset_window = None
     password_vault_window = None
-    entry_window = None
 
     @staticmethod
     def _clearwidgets():
