@@ -41,3 +41,30 @@ class SecurityManager:
         )
         return kdf
 
+    def encrypt_fields(self, obj):
+        obj1 = {"name": self.encrypt(obj["name"], self.encryption_key),
+                "url": self.encrypt(obj["url"], self.encryption_key),
+                "username": self.encrypt(obj["username"], self.encryption_key),
+                "password": self.encrypt(obj["password"], self.encryption_key),
+                "notes": self.encrypt(obj["notes"], self.encryption_key)
+                }
+        return obj1
+
+    def decrypt_fields(self, array):
+        results = []
+        for obj in array:
+            id = obj["id"]
+            name = obj["name"]
+            url = obj["url"]
+            username = obj["username"]
+            password = obj["password"]
+            note = obj["notes"]
+            results.append({"id": id,
+                            "name": self.decrypt(name, self.encryption_key),
+                            "url": self.decrypt(url, self.encryption_key),
+                            "username": self.decrypt(username, self.encryption_key),
+                            "password": self.decrypt(password, self.encryption_key),
+                            "notes": self.decrypt(note, self.encryption_key)
+                            })
+        return results
+
