@@ -20,7 +20,7 @@ class PPMWindow:
     def _clearwidgets():
         """
         clears window objects
-        :return: void
+        :return: None
         """
         for widget in PPMWindow.window.winfo_children():
             widget.destroy()
