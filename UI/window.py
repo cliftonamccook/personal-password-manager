@@ -1,5 +1,4 @@
 from tkinter import *
-from Controller.controller import Controller
 
 
 class PPMWindow:
@@ -128,6 +127,9 @@ class LoginWindow(PPMWindow):
         mpwd = self.master_password_text.get()
         return mpwd
 
+    def show_error(self):
+        self.master_password_text.delete(0, 'end')
+        self.error_text.config(text="Wrong Password")
 
 class PasswordVaultWindow(PPMWindow):
     def __init__(self):

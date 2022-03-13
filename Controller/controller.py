@@ -26,8 +26,7 @@ class Controller:
         if password:
             self.refresh()
         else:
-            self.ui.login_window.master_password_text.delete(0, 'end')
-            self.ui.login_window.error_text.config(text="Wrong Password")
+            self.ui.login_window.show_error()
 
     def refresh(self):
         self.ui.password_vault_window.start()
