@@ -1,6 +1,7 @@
 from UI.window import PPMWindow, PasswordVaultWindow, LoginWindow, InitialWindow
 from Controller.controller import Controller
 
+
 def main():
     controller = Controller()
     PPMWindow.controller = controller
@@ -19,3 +20,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    

@@ -29,41 +29,8 @@ class Controller:
             self.ui.login_window.master_password_text.delete(0, 'end')
             self.ui.login_window.error_text.config(text="Wrong Password")
 
-    # def encode_values(self, obj):
-    #     obj1 = {"name": obj["name"].encode(),
-    #             "url": obj["url"].encode(),
-    #             "username": obj["username"].encode(),
-    #             "password": obj["password"].encode(),
-    #             "notes": obj["notes"].encode()
-    #             }
-    #     return obj1
-
-    # def encrypt_fields(self, obj):
-    #     obj1 = self.security.encrypt_fields(obj)
-    #     return obj1
-
-    # def addentry(self, obj):
-    #     encoded_fields = self.encode_values(obj)
-    #     encrypted_fields = self.encrypt_fields(encoded_fields)
-    #     self.db.insert_entry(encrypted_fields)
-    #     self.refresh()
-
     def refresh(self):
-        # self.decrypt_entries()
         self.ui.password_vault_window.start()
-
-    # def get_entries(self):
-    #     enc = self.db.fetch_entries()
-    #     return enc
-
-    # def decrypt_entries(self):
-    #     enc = self.get_entries()
-    #     obj = self.security.decrypt_fields(enc)
-    #     self.results = obj
-
-    # def deleteentry(self,input):
-    #     self.db.delete_entry(input)
-    #     self.refresh()
 
     def savemasterpassword(self):
         password = self.ui.initial_window.get_masterpwdtxt()

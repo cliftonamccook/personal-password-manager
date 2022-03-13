@@ -143,7 +143,7 @@ class PasswordVaultWindow(PPMWindow):
 
     def start(self):
         super()._clearwidgets()
-        super().window.geometry('1280x720')
+        super().window.geometry('1080x480')
         super().window.resizable(height=None, width=None)
         self.add_entry_button = Button(
             super().window, text="Add Entry",
@@ -196,3 +196,9 @@ class PasswordVaultWindow(PPMWindow):
             font=('Helvetica', 14, 'bold')
         )
         self.password_label.grid(row=2, column=3, padx=80)
+
+        Label(
+            super().window,
+            text="<Decrypted entries will show up here once database is populated>",
+            font=('Helvetica', 14, 'bold')
+        ).grid(row=6, column=1, columnspan=3, pady=80)
