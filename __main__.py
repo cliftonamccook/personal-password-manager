@@ -1,4 +1,5 @@
-from UI.window import PPMWindow, PasswordVaultWindow, LoginWindow, InitialWindow
+from UI.window import PPMWindow, PasswordVaultWindow, LoginWindow, InitialWindow, EntryWindow, \
+    RecoveryWindow, ResetWindow
 from Controller.controller import Controller
 
 
@@ -8,7 +9,10 @@ def main():
     mainwindow = PPMWindow()
     controller.ui = mainwindow
     mainwindow.password_vault_window = PasswordVaultWindow()
+    mainwindow.entry_window = EntryWindow()
     mainwindow.login_window = LoginWindow()
+    mainwindow.recovery_window = RecoveryWindow()
+    mainwindow.reset_window = ResetWindow()
     mainwindow.initial_window = InitialWindow()
 
     if controller.db.cursor.fetchall():
@@ -20,4 +24,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    
