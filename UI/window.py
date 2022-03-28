@@ -213,7 +213,7 @@ class LoginWindow(PPMWindow):
         self.error_text.pack(side=TOP)
         self.open_vault_button = Button(
             super().window, text="Open Password Vault",
-            command=super().controller.checkpassword
+            command=super().controller.openvault
         )
         self.open_vault_button.pack(pady=5)
         self.reset_button = Button(
