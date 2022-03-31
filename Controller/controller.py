@@ -8,26 +8,29 @@ from Controller.entrymanager import EntryManager, Entry
 
 class Controller:
     def __init__(self):
-        self.ui = None
         self.security = SecurityManager()
         self.db = DBControl()
         self.createDatabase()
         self.entryman = EntryManager()
+        self.messages = {}
 
     def createDatabase(self):
         self.db.start()
 
-    def openvault(self):
-        entered_pwd = self.ui.login_window.get_masterpwdtxt().encode('utf-8')
+    def openvault(self, k):
+        entered_pwd = k.encode('utf-8') # self.ui.login_window.get_masterpwdtxt().encode('utf-8') # send this in as a parameter
         password_hash = self.security.hashpassword(entered_pwd)
         self.security.encryption_key = base64.urlsafe_b64encode(
-            self.security.getKDF().derive(self.ui.login_window.get_masterpwdtxt().encode()))
+            self.security.getKDF().derive(k.encode())) # self.ui.login_window.get_masterpwdtxt().encode())
         password = self.db.fetch_master_pwd(password_hash)
         if password:
+            self.messages["Password"] = True
             self.refreshall()
         else:
-            self.ui.login_window.master_password_text.delete(0, 'end')
-            self.ui.login_window.error_text.config(text="Wrong Password")
+            self.messages["Password"] = False
+            # self.ui.login_window.master_password_text.delete(0, 'end')
+            # self.ui.login_window.error_text.config(text="Wrong Password")
+
 
     def addentry(self, obj):
         obj2 = Entry(obj["name"], obj["url"], obj["username"], obj["password"], obj["notes"])
@@ -40,12 +43,13 @@ class Controller:
         self.db.delete_entry(entryID)
         self.refreshall()
 
-    def search(self):
-        txt = self.ui.password_vault_window.search_field.get()
+    def search(self, string):
+        print(string)
+        txt = string # self.ui.password_vault_window.search_field.get()
         for i in self.entryman.entries:
             if not any([re.search(txt, i.name.decode()), re.search(txt, i.url.decode()), re.search(txt, i.username.decode()), re.search(txt, i.password.decode()), re.search(txt, i.notes.decode())]):
                 self.entryman.entries.remove(i)
-        self.searchrefresh()
+        # self.searchrefresh()
 
     def loadentries(self):
         enc = self.db.fetch_entries()
@@ -57,16 +61,16 @@ class Controller:
     def refreshall(self):
         self.entryman.flush()
         self.loadentries()
-        self.ui.password_vault_window.start()
+        # self.ui.password_vault_window.start()
 
-    def searchrefresh(self):
-        self.ui.password_vault_window.start()
+    # def searchrefresh(self):
+    #     self.ui.password_vault_window.start()
 
-    def savemasterpassword(self):
-        password = self.ui.initial_window.get_masterpwdtxt()
-        confirmation = self.ui.initial_window.get_confirmpwdtxt()
+    def savemasterpassword(self, p, cpwd):
+        password = p # self.ui.initial_window.get_masterpwdtxt()
+        confirmation = cpwd # self.ui.initial_window.get_confirmpwdtxt()
         if password == confirmation:
-            password = self.ui.initial_window.get_masterpwdtxt()
+            password = p # self.ui.initial_window.get_masterpwdtxt()
             password = password.encode('utf-8')
             # print(password)
 
@@ -81,23 +85,24 @@ class Controller:
             )
 
             self.db.insert_keys(password_hash, recovery_key)
-
-            self.ui.recovery_window.startRecovery(key)
+            self.messages["key"] = key
+            # self.ui.recovery_window.startRecovery(key)
             # self.ui.show_frame(RecoveryFrame(key))
         else:
-            self.ui.initial_window.show_msg("Passwords don't match")
+            self.messages["key"] = ""
+            # self.ui.initial_window.show_msg("Passwords don't match")
             # pass
 
-    def resetpassword(self):
-        self.ui.reset_window.start()
 
-    def checkrecoverykey(self):
-        recovery_key_hash = self.security.hashpassword(str(self.ui.reset_window.rkey_text.get()).encode('utf-8'))
+    def checkrecoverykey(self, txt):
+        recovery_key_hash = self.security.hashpassword(str(txt).encode('utf-8')) # self.ui.reset_window.rkey_text.get()
         self.db.cursor.execute('SELECT * FROM masterpassword WHERE id = 1 AND recovery_key = ?', [(recovery_key_hash)])
         checked = self.db.cursor.fetchall()
-
+        
         if checked:
-            self.ui.initial_window.start()
+            self.messages["checked"] = True
+            # self.ui.initial_window.start()
         else:
-            self.ui.reset_window.rkey_text.delete(0, 'end')
-            self.ui.reset_window.message_label.config(text='Wrong Key')
+            self.messages["checked"] = False
+            # self.ui.reset_window.rkey_text.delete(0, 'end')
+            # self.ui.reset_window.message_label.config(text='Wrong Key')
