@@ -9,13 +9,14 @@ class PPMWindow(Tk):
     """
     Root GUI Window
     """
+
     def __init__(self, controller):
         Tk.__init__(self)
         self.controller = controller
         self.geometry('1280x720')
         self.title("Personal Password Manager")
         container = Frame(self)
-        container.pack(side="top", fill="both", expand = True)
+        container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
         self.con = container
@@ -31,6 +32,7 @@ class PPMWindow(Tk):
             self.show_frame(LoginFrame)
         else:
             self.show_frame(InitialFrame)
+        self.mainloop()
 
     def show_frame(self, cont):
         frame = self.frames[cont]
@@ -49,6 +51,7 @@ class InitialFrame(Frame):
     Password database creation interface
     Requires a master password for encrypting entries
     """
+
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
         self.parent = parent
@@ -62,7 +65,7 @@ class InitialFrame(Frame):
         self.master_password_label.pack()
         self.master_password_text = Entry(
             self,
-            width=20,
+            width=40,
             show="*"  # Hides password characters
         )
         self.master_password_text.pack()
@@ -75,7 +78,7 @@ class InitialFrame(Frame):
         self.confirm_master_password_label.pack()
         self.confirm_master_password_text = Entry(
             self,
-            width=20,
+            width=40,
             show="*"  # Hides password characters
         )
         self.confirm_master_password_text.pack()
@@ -86,7 +89,7 @@ class InitialFrame(Frame):
         )
         self.save_master_password_button.pack(pady=5)
         self.im = PhotoImage(data=self.imageData)
-        Label(self, image=self.im).pack()
+        Label(self, image=self.im).pack(pady=100)
 
     def savepwd(self):
         pwd = self.master_password_text.get()
@@ -102,7 +105,6 @@ class InitialFrame(Frame):
             self.master_password_label.config(text="Passwords don't match")
 
 
-
 class EntryFrame(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
@@ -111,25 +113,25 @@ class EntryFrame(Frame):
         self.name_label = Label(self, text="Name")
         self.name_label.config(anchor=CENTER)
         self.name_label.pack()
-        self.name_text = Entry(self, width=20)
+        self.name_text = Entry(self, width=40)
         self.name_text.pack()
         self.name_text.focus()
         self.url_label = Label(self, text="URL")
         self.url_label.config(anchor=CENTER)
         self.url_label.pack()
-        self.url_text = Entry(self, width=20)
+        self.url_text = Entry(self, width=40)
         self.url_text.pack()
         self.url_text.focus()
         self.username_label = Label(self, text="Username")
         self.username_label.config(anchor=CENTER)
         self.username_label.pack()
-        self.username_text = Entry(self, width=20)
+        self.username_text = Entry(self, width=40)
         self.username_text.pack()
         self.username_text.focus()
         self.password_label = Label(self, text="Password")
         self.password_label.config(anchor=CENTER)
         self.password_label.pack()
-        self.password_text = Entry(self, width=20)
+        self.password_text = Entry(self, width=40)
         self.password_text.pack()
         self.note_label = Label(self, text="Note")
         self.note_label.config(anchor=CENTER)
@@ -137,10 +139,10 @@ class EntryFrame(Frame):
         self.note_text = Text(
             self,
             undo=True,
-            height=5,
-            width=10
+            height=10,
+            width=40
         )
-        self.note_text.pack(fill=BOTH)
+        self.note_text.pack(fill='y')
         self.name_text.focus()
 
         self.save_entry_button = Button(
@@ -151,7 +153,7 @@ class EntryFrame(Frame):
         self.save_entry_button.pack(pady=5)
 
         self.cancel_button = Button(
-            self, 
+            self,
             text="Cancel",
             command=lambda: controller.show_frame(PasswordVaultFrame)
         )
@@ -159,12 +161,12 @@ class EntryFrame(Frame):
 
     def addEntry(self):
         obj = {
-            "name": self.name_text.get(), 
-            "url": self.url_text.get(), 
+            "name": self.name_text.get(),
+            "url": self.url_text.get(),
             "username": self.username_text.get(),
-            "password": self.password_text.get(), 
+            "password": self.password_text.get(),
             "notes": self.note_text.get("1.0", "end - 1 chars")
-            }
+        }
         self.root.controller.addentry(obj)
         self.root.reloadvault()
 
@@ -183,7 +185,7 @@ class LoginFrame(Frame):
         self.master_password_entry_label.pack()
         self.master_password_text = Entry(
             self,
-            width=20,
+            width=40,
             show="*"  # Hides password characters
         )
         self.master_password_text.pack()
@@ -204,8 +206,7 @@ class LoginFrame(Frame):
         self.reset_button.pack(pady=5)
 
         self.im = PhotoImage(data=self.imageData)
-        Label(self, image=self.im).pack()
-
+        Label(self, image=self.im).pack(pady=100)
 
     def login(self):
         k = self.master_password_text.get()
@@ -357,7 +358,6 @@ class PasswordVaultFrame(Frame):
 
         if self.entries is not None:
             for i in range(len(self.entries)):
-
                 id = self.entries[i].id
                 name = StringVar()
                 name.set(self.entries[i].name)
@@ -371,12 +371,12 @@ class PasswordVaultFrame(Frame):
                 notes.set(self.entries[i].notes)
                 self.notes[id] = notes
 
-                Entry(self, state="readonly", textvariable=name).grid(row=i+4, column=0)
-                Entry(self, state="readonly", textvariable=url).grid(row=i+4, column=1)
-                Entry(self, state="readonly", textvariable=username).grid(row=i+4, column=2)
-                Entry(self, show='', state="readonly", textvariable=password).grid(row=i+4, column=3)
-                Button(self, text="Show Note", command=partial(self.shownote, id)).grid(column=5, row=(i+4), pady=10)
-                Button(self, text="Delete", command=partial(self.remove, id)).grid(column=6, row=(i+4), pady=10)
+                Entry(self, state="readonly", textvariable=name).grid(row=i + 4, column=0)
+                Entry(self, state="readonly", textvariable=url).grid(row=i + 4, column=1)
+                Entry(self, state="readonly", textvariable=username).grid(row=i + 4, column=2)
+                Entry(self, show='', state="readonly", textvariable=password).grid(row=i + 4, column=3)
+                Button(self, text="Show Note", command=partial(self.shownote, id)).grid(column=5, row=(i + 4), pady=10)
+                Button(self, text="Delete", command=partial(self.remove, id)).grid(column=6, row=(i + 4), pady=10)
 
     def searchString(self):
         txt = self.search_field.get()

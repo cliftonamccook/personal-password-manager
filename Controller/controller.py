@@ -30,19 +30,14 @@ class Controller:
             self.messages["Password"] = False
 
     def addentry(self, obj):
-        obj2 = Entry(
-            obj["name"], 
-            obj["url"], 
-            obj["username"], 
-            obj["password"], 
-            obj["notes"])
-        obj2.encode()
-        encrypted_fields = self.security.encrypt_fields(obj2)
+        entry = self.entryman.createEntry(obj)
+        entry.encode()
+        encrypted_fields = self.security.encrypt_fields(entry)
         self.db.insert_entry(encrypted_fields)
         self.refreshall()
 
-    def deleteentry(self, entryID):
-        self.db.delete_entry(entryID)
+    def deleteentry(self, entry_id):
+        self.db.delete_entry(entry_id)
         self.refreshall()
 
     def search(self, string):
@@ -50,24 +45,18 @@ class Controller:
         txt = string
         for i in self.entryman.entries:
             if not any([
-                re.search(txt, i.name.decode()), 
-                re.search(txt, i.url.decode()), 
-                re.search(txt, i.username.decode()), 
-                re.search(txt, i.password.decode()), 
-                re.search(txt, i.notes.decode())]):
-                
+                re.search(txt, i.name.decode()),
+                re.search(txt, i.url.decode()),
+                re.search(txt, i.username.decode()),
+                re.search(txt, i.password.decode()),
+                re.search(txt, i.notes.decode())
+            ]):
                 self.entryman.entries.remove(i)
 
     def loadentries(self):
         enc = self.db.fetch_entries()
         for i in enc:
-            entry = Entry(
-                i["name"], 
-                i["url"], 
-                i["username"], 
-                i["password"], 
-                i["notes"], 
-                i["id"])
+            entry = self.entryman.createEntry(i)
             e = self.security.decrypt_fields(entry)
             self.entryman.entries.append(e)
 
