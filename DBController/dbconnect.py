@@ -5,7 +5,6 @@ class DBControl:
     """
     Handles database connection
     """
-
     def __init__(self):
         self.file = 'mypasswords.db'
         self.cursor = None
@@ -44,8 +43,7 @@ class DBControl:
         return self.cursor.fetchall()
 
     def insert_keys(self, password_hash, recovery_key):
-        insert_password = """INSERT INTO masterpassword(password, recovery_key)
-                    VALUES(?, ?) """
+        insert_password = """INSERT INTO masterpassword(password, recovery_key) VALUES(?, ?) """
         self.cursor.execute(insert_password, ((password_hash), (recovery_key)))
         self.db.commit()
 
@@ -54,8 +52,7 @@ class DBControl:
         self.db.commit()
 
     def insert_entry(self, obj):
-        insert_fields = """INSERT INTO vault(name, url, username, password, note) 
-                VALUES(?, ?, ?, ?, ?) """
+        insert_fields = """INSERT INTO vault(name, url, username, password, note) VALUES(?, ?, ?, ?, ?) """
         name = obj.name
         url = obj.url
         username = obj.username
@@ -63,6 +60,10 @@ class DBControl:
         notes = obj.notes
         self.cursor.execute(insert_fields, (name, url, username, password, notes))
         self.db.commit()
+
+    def fetchRKey(self, recovery_key_hash):
+        self.cursor.execute('SELECT * FROM masterpassword WHERE id = 1 AND recovery_key = ?', [(recovery_key_hash)])
+        return self.cursor.fetchall()
 
     def fetch_entries(self):
         objs = []

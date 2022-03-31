@@ -6,29 +6,25 @@ from functools import partial
 
 
 class PPMWindow(Tk):
-    def __init__(self, controller): # *args, **kwargs
-        Tk.__init__(self) # , *args, **kwargs
+    """
+    Root GUI Window
+    """
+    def __init__(self, controller):
+        Tk.__init__(self)
         self.controller = controller
         self.geometry('1280x720')
         self.title("Personal Password Manager")
         container = Frame(self)
-
         container.pack(side="top", fill="both", expand = True)
-
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
         self.con = container
-
         self.frames = {}
 
         for F in (EntryFrame, PasswordVaultFrame, LoginFrame, ResetFrame, InitialFrame):
-
             frame = F(container, self)
-
             self.frames[F] = frame
-
             frame.grid(row=0, column=0, sticky="nsew")
-
 
     def start(self):
         if self.controller.db.cursor.fetchall():
@@ -53,7 +49,6 @@ class InitialFrame(Frame):
     Password database creation interface
     Requires a master password for encrypting entries
     """
-
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
         self.parent = parent
@@ -109,7 +104,6 @@ class InitialFrame(Frame):
 
 
 class EntryFrame(Frame):
-
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
         self.parent = parent
@@ -164,8 +158,13 @@ class EntryFrame(Frame):
         self.cancel_button.pack(pady=5)
 
     def addEntry(self):
-        obj = {"name": self.name_text.get(), "url": self.url_text.get(), "username": self.username_text.get(),
-               "password": self.password_text.get(), "notes": self.note_text.get("1.0", "end - 1 chars")}
+        obj = {
+            "name": self.name_text.get(), 
+            "url": self.url_text.get(), 
+            "username": self.username_text.get(),
+            "password": self.password_text.get(), 
+            "notes": self.note_text.get("1.0", "end - 1 chars")
+            }
         self.root.controller.addentry(obj)
         self.root.reloadvault()
 
@@ -241,9 +240,9 @@ class ResetFrame(Frame):
         )
         self.check_key_button.pack(pady=5)
 
-    def checkRK(self, txt):
+    def checkRK(self):
         rk = self.rkey_text.get()
-        self.root.controller.checkrecoverykey(txt)
+        self.root.controller.checkrecoverykey(rk)
         if self.root.controller.messages["checked"]:
             self.root.show_frame(InitialFrame)
         else:
@@ -292,7 +291,6 @@ class UserEntry(Frame):
     A UserEntry consists of:
     Name, URL, Username, Password, and Note
     """
-
     def __init__(self, parent, controller, array, row):
         Frame.__init__(self, parent)
         self.parent = parent
@@ -368,16 +366,16 @@ class UserEntry(Frame):
         self.note_text = StringVar()
         self.note_text.set(array[self.row].notes)
 
-        self.showpassword_button = Button(
-            self,
-            text="Show/Hide Password",
-            command=self.showpassword
-        )
-        self.showpassword_button.grid(
-            column=4,
-            row=(self.row + 3),
-            pady=10
-        )
+        # self.showpassword_button = Button(
+        #     self,
+        #     text="Show/Hide Password",
+        #     command=self.showpassword
+        # )
+        # self.showpassword_button.grid(
+        #     column=4,
+        #     row=(self.row + 3),
+        #     pady=10
+        # )
 
         self.shownote_button = Button(
             self,
@@ -414,21 +412,20 @@ class UserEntry(Frame):
 
 
 class PasswordVaultFrame(Frame):
-
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
         self.parent = parent
         self.root = controller
         self.add_entry_button = Button(
             self, text="Add Entry",
-            command=lambda: controller.show_frame(EntryFrame) # self.controller.ui.entry_window.start
+            command=lambda: controller.show_frame(EntryFrame)
         )
         self.add_entry_button.grid(column=1, pady=20)
 
         self.search_button = Button(
             self,
             text="Search",
-            command=self.searchString # self.controller.search
+            command=self.searchString
         )
         self.search_button.grid(row=0, column=2)
 
@@ -439,7 +436,7 @@ class PasswordVaultFrame(Frame):
             self,
             text="Lock Vault",
             bg="red",
-            command=self.lock # self.controller.ui.login_window.start
+            command=self.lock
         )
         self.lock_button.grid(row=0)
 
@@ -448,7 +445,7 @@ class PasswordVaultFrame(Frame):
             text="Refresh All Entries",
             bg="green",
             fg="white",
-            command=self.refresh # self.controller.refreshall
+            command=self.refresh
         )
         self.refresh.grid(row=0, column=4)
 
@@ -480,50 +477,36 @@ class PasswordVaultFrame(Frame):
         )
         self.password_label.grid(row=2, column=3, padx=80)
 
-        self.blocks = {}
         self.notes = {}
+        self.entries = self.root.controller.entryman.entries
 
-        if self.root.controller.entryman.entries is not None:
-            for i in range(len(self.root.controller.entryman.entries)):
-                # print(self.root.controller.entryman.entries,i)
-                # UserEntry(self.parent, self.root, self.root.controller.entryman.entries, i)
+        if self.entries is not None:
+            for i in range(len(self.entries)):
 
-
-                id = self.root.controller.entryman.entries[i].id
+                id = self.entries[i].id
                 name = StringVar()
-                name.set(self.root.controller.entryman.entries[i].name)
+                name.set(self.entries[i].name)
                 url = StringVar()
-                url.set(self.root.controller.entryman.entries[i].url)
+                url.set(self.entries[i].url)
                 username = StringVar()
-                username.set(self.root.controller.entryman.entries[i].username)
+                username.set(self.entries[i].username)
                 password = StringVar()
-                password.set(self.root.controller.entryman.entries[i].password)
+                password.set(self.entries[i].password)
                 notes = StringVar()
-                notes.set(self.root.controller.entryman.entries[i].notes)
+                notes.set(self.entries[i].notes)
                 self.notes[id] = notes
-
-                entryblock = {}
 
                 Entry(self, state="readonly", textvariable=name).grid(row=i+4, column=0)
                 Entry(self, state="readonly", textvariable=url).grid(row=i+4, column=1)
                 Entry(self, state="readonly", textvariable=username).grid(row=i+4, column=2)
                 Entry(self, show='', state="readonly", textvariable=password).grid(row=i+4, column=3)
-                # entryblock["blockshowhide"] = Button(self, text="Show/Hide Password", command=partial(self.showpassword, id)).grid(column=4, row=(i+4), pady=10)
                 Button(self, text="Show Note", command=partial(self.shownote, id)).grid(column=5, row=(i+4), pady=10)
                 Button(self, text="Delete", command=partial(self.remove, id)).grid(column=6, row=(i+4), pady=10)
-
-                self.blocks[id] = entryblock
-
-            print(self.blocks)
-        else:
-            print("yow")
 
     def searchString(self):
         txt = self.search_field.get()
         self.root.controller.search(txt)
-        # self.root.show_frame(PasswordVaultFrame)
         self.root.reloadvault()
-
 
     def refresh(self):
         self.root.controller.refreshall()
@@ -537,24 +520,7 @@ class PasswordVaultFrame(Frame):
         self.root.controller.deleteentry(ID)
         self.root.reloadvault()
 
-
-    # def showpassword(self, id):
-    #     print(id)
-    #     if self.blocks[id]["blockpwd"]["show"] == "":
-    #         self.blocks[id]["blockpwd"]["show"] = "*"
-    #     else:
-    #         self.blocks[id]["blockpwd"]["show"] = ""
-        # if self.pwd["show"] == "":
-        #     self.pwd["show"] = "*"
-        # else:
-        #     self.pwd["show"] = ""
-
     def shownote(self, id):
         notes = self.notes[id].get()[2:-1]
         lines = notes.split("\\n")
         messagebox.showinfo("Note", "\n".join(lines))
-        # txt = "\n".join(lines)
-        # simpledialog.askstring(title="Your Notes", prompt="", initialvalue=txt)
-
-# app = PPMWindow()
-# app.mainloop()
