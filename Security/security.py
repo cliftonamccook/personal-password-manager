@@ -9,9 +9,8 @@ class SecurityManager:
     """
     Handles the encryption and decryption of plaintext entries
     """
-
     def __init__(self):
-        self.salt = b'7139'
+        self.salt = b'7139' # salt should be random but...TODO
         # self.salt = os.urandom(16)
         self.backend = default_backend()
         self.encryption_key = None
