@@ -148,7 +148,7 @@ class EntryFrame(Frame):
         self.save_entry_button = Button(
             self,
             text="Save",
-            command=self.addEntry
+            command=self.saveEntry
         )
         self.save_entry_button.pack(pady=5)
 
@@ -159,7 +159,7 @@ class EntryFrame(Frame):
         )
         self.cancel_button.pack(pady=5)
 
-    def addEntry(self):
+    def saveEntry(self):
         obj = {
             "name": self.name_text.get(),
             "url": self.url_text.get(),
@@ -168,7 +168,15 @@ class EntryFrame(Frame):
             "notes": self.note_text.get("1.0", "end - 1 chars")
         }
         self.root.controller.addentry(obj)
+        self.clearfields()
         self.root.reloadvault()
+
+    def clearfields(self):
+        self.name_text.delete(0,'end')
+        self.url_text.delete(0,'end')
+        self.username_text.delete(0,'end')
+        self.password_text.delete(0,'end')
+        self.note_text.delete(1.0,'end')
 
 
 class LoginFrame(Frame):
@@ -254,7 +262,6 @@ class ResetFrame(Frame):
 class RecoveryFrame(Frame):
     def __init__(self, parent, controller, key=""):
         Frame.__init__(self, parent)
-        self.root = controller
         self.save_recovery_key_label = Label(
             self,
             text="Save this key to be able to recover account"
@@ -270,21 +277,15 @@ class RecoveryFrame(Frame):
         self.copy_button = Button(
             self,
             text="Copy Key",
-            command=self.copyKey
+            command=lambda: pyperclip.copy(self.recovery_key_label.cget("text"))
         )
         self.copy_button.pack(pady=5)
         self.open_vault_button = Button(
             self,
             text="Done",
-            command=self.done
+            command=lambda: controller.show_frame(PasswordVaultFrame)
         )
         self.open_vault_button.pack(pady=5)
-
-    def copyKey(self):
-        pyperclip.copy(self.recovery_key_label.cget("text"))
-
-    def done(self):
-        self.root.show_frame(PasswordVaultFrame)
 
 
 class PasswordVaultFrame(Frame):
@@ -294,7 +295,7 @@ class PasswordVaultFrame(Frame):
         self.root = controller
         self.add_entry_button = Button(
             self, text="Add Entry",
-            command=lambda: controller.show_frame(EntryFrame)
+            command=self.addentry
         )
         self.add_entry_button.grid(column=1, pady=20)
 
@@ -391,11 +392,14 @@ class PasswordVaultFrame(Frame):
         self.root.frames[LoginFrame].master_password_text.delete(0, 'end')
         self.root.show_frame(LoginFrame)
 
-    def remove(self, ID):
-        self.root.controller.deleteentry(ID)
+    def remove(self, id: int):
+        self.root.controller.deleteentry(id)
         self.root.reloadvault()
 
-    def shownote(self, id):
+    def shownote(self, id: int):
         notes = self.notes[id].get()[2:-1]
         lines = notes.split("\\n")
         messagebox.showinfo("Note", "\n".join(lines))
+
+    def addentry(self):
+        self.root.show_frame(EntryFrame)

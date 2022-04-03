@@ -5,7 +5,8 @@ from UI.window import PPMWindow
 def main():
     controller = Controller()
     app = PPMWindow(controller)
-    app.start()    
+    app.start()
+
 
 if __name__ == '__main__':
     main()

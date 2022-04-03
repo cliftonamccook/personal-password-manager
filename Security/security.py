@@ -22,12 +22,12 @@ class SecurityManager:
     def decrypt(self, message: bytes, token: bytes) -> bytes:
         return Fernet(token).decrypt(message)
 
-    def hashpassword(self, pwd):
+    def hashpassword(self, pwd: bytes) -> str:
         password_hash = hashlib.sha256(pwd)
         password_hash = password_hash.hexdigest()
         return password_hash
 
-    def getKDF(self):
+    def getKDF(self) -> PBKDF2HMAC:
         """
         key derivation function
         derives encryption key from user password

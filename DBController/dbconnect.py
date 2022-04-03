@@ -5,12 +5,12 @@ class DBControl:
     """
     Handles database connection
     """
-    def __init__(self):
+    def __init__(self) -> None:
         self.file = 'mypasswords.db'
         self.cursor = None
         self.db = None
 
-    def start(self):
+    def start(self) -> bool:
         self.db = sqlite3.connect(self.file)
         self.cursor = self.db.cursor()
 
