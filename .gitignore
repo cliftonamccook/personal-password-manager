@@ -1,0 +1,27 @@
+# Files to ignore when adding and committing files to a repository
+.DS_Store
+Thumbs.db
+*.db
+
+*.py[cod]
+*$py.class
+__pycache__/
+instance/
+
+.pytest_cache/
+.coverage
+htmlcov/
+
+dist/
+build/
+*.egg-info/
+
+# virtualenv
+.venv/
+venv/
+
+# PyCharm
+.idea
+
+# VS Code
+.vscode
